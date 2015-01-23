@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -23,13 +24,24 @@ public class PhotosActivity extends ActionBarActivity {
     private static final String INSTAGRAM_API = "https://api.instagram.com/v1";
     private static final String POPULAR_ENDPOINT = "/media/popular";
 
+    private ListView lvPhotos;
+
     private ArrayList<InstagramPhoto> photos = new ArrayList<>();
+    private InstagramPhotoAdapter aPhotos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photos);
+        configureListView();
+
         fetchPopularPhotos();
+    }
+
+    private void configureListView() {
+        lvPhotos = (ListView) findViewById(R.id.lvPhotos);
+        aPhotos = new InstagramPhotoAdapter(this, photos);
+        lvPhotos.setAdapter(aPhotos);
     }
 
     private void fetchPopularPhotos() {
@@ -46,6 +58,7 @@ public class PhotosActivity extends ActionBarActivity {
                 JSONArray photosJSON = null;
                 try {
                     photosJSON = response.getJSONArray("data");
+                    photos.clear();
 
                     for (int i = 0; i < photosJSON.length(); i++) {
                         JSONObject photoJSON = photosJSON.getJSONObject(i);
@@ -57,6 +70,7 @@ public class PhotosActivity extends ActionBarActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                aPhotos.notifyDataSetChanged();
             }
 
             @Override
