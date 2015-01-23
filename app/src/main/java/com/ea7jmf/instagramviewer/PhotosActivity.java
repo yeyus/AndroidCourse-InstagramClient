@@ -2,16 +2,69 @@ package com.ea7jmf.instagramviewer;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 
 public class PhotosActivity extends ActionBarActivity {
+
+    private static final String CLIENT_ID = "39e68d48b9dd403bb682d6acb9e89a62";
+    private static final String INSTAGRAM_API = "https://api.instagram.com/v1";
+    private static final String POPULAR_ENDPOINT = "/media/popular";
+
+    private ArrayList<InstagramPhoto> photos = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photos);
+        fetchPopularPhotos();
+    }
+
+    private void fetchPopularPhotos() {
+        String requestUrl = INSTAGRAM_API + POPULAR_ENDPOINT + "?client_id=" + CLIENT_ID;
+
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.get(requestUrl, new JsonHttpResponseHandler() {
+            // define success and failure
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.i("fetchPopularPhotos", response.toString());
+
+                JSONArray photosJSON = null;
+                try {
+                    photosJSON = response.getJSONArray("data");
+
+                    for (int i = 0; i < photosJSON.length(); i++) {
+                        JSONObject photoJSON = photosJSON.getJSONObject(i);
+                        InstagramPhoto photo = InstagramPhoto.parse(photoJSON);
+                        photos.add(photo);
+
+                        Log.i("fetchPopularPhotos", photo.toString());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                Log.d("fetchPopularPhotos", errorResponse.toString());
+            }
+        });
     }
 
 
