@@ -1,39 +1,42 @@
-package com.ea7jmf.instagramviewer;
+package com.ea7jmf.instagramviewer.models;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Date;
+import java.util.ArrayList;
 
 /**
  * Created by jesusft on 1/22/15.
  */
 public class InstagramPhoto {
 
-    private String username;
+    private InstagramUser user;
+    private ArrayList<InstagramComment> comments;
     private String caption;
     private String imageUrl;
     private int imageHeight;
     private int likesCount = 0;
     private double latitude = 0.0;
     private double longitude = 0.0;
+    private String locationName;
     private long createdTime;
 
-    public InstagramPhoto(String username, String caption, String imageUrl, int imageHeight, int likesCount, long createdTime) {
-        this.username = username;
+    public InstagramPhoto(String caption, String imageUrl, int imageHeight, int likesCount, long createdTime) {
         this.caption = caption;
         this.imageUrl = imageUrl;
         this.imageHeight = imageHeight;
         this.likesCount = likesCount;
         this.createdTime = createdTime;
+        this.comments = new ArrayList<>();
+
     }
 
-    public String getUsername() {
-        return username;
+    public InstagramUser getUser() {
+        return user;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUser(InstagramUser user) {
+        this.user = user;
     }
 
     public String getCaption() {
@@ -84,6 +87,14 @@ public class InstagramPhoto {
         this.longitude = longitude;
     }
 
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
+
     public long getCreatedTime() {
         return createdTime;
     }
@@ -92,18 +103,39 @@ public class InstagramPhoto {
         this.createdTime = createdTime;
     }
 
+    public ArrayList<InstagramComment> getComments() {
+        return comments;
+    }
+
+    public void setComments(ArrayList<InstagramComment> comments) {
+        this.comments = comments;
+    }
+
     public static InstagramPhoto parse(JSONObject photoJSON) throws JSONException {
+        String caption = "";
+
+        if(!photoJSON.isNull("caption")) {
+            caption = photoJSON.getJSONObject("caption").getString("text");
+        }
+
         InstagramPhoto ip = new InstagramPhoto(
-                photoJSON.getJSONObject("user").getString("username"),
-                photoJSON.getJSONObject("caption").getString("text"),
+                caption,
                 photoJSON.getJSONObject("images").getJSONObject("standard_resolution").getString("url"),
                 photoJSON.getJSONObject("images").getJSONObject("standard_resolution").getInt("height"),
                 photoJSON.getJSONObject("likes").getInt("count"),
                 Long.parseLong(photoJSON.getString("created_time")));
 
         if (!photoJSON.isNull("location")) {
-            ip.setLatitude(photoJSON.getJSONObject("location").getDouble("latitude"));
-            ip.setLongitude(photoJSON.getJSONObject("location").getDouble("longitude"));
+            JSONObject locationJSON = photoJSON.getJSONObject("location");
+            if (!locationJSON.isNull("latitude") ||
+                    !locationJSON.isNull("longitude")) {
+                ip.setLatitude(locationJSON.getDouble("latitude"));
+                ip.setLongitude(locationJSON.getDouble("longitude"));
+            }
+
+            if(!locationJSON.isNull("name")) {
+                ip.setLocationName(locationJSON.getString("name"));
+            }
         }
 
         return ip;
@@ -112,7 +144,6 @@ public class InstagramPhoto {
     @Override
     public String toString() {
         return "InstagramPhoto{" +
-                "username='" + username + '\'' +
                 ", caption='" + caption + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", likesCount=" + likesCount +

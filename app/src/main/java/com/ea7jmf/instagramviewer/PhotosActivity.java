@@ -7,6 +7,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
+import com.ea7jmf.instagramviewer.models.InstagramComment;
+import com.ea7jmf.instagramviewer.models.InstagramPhoto;
+import com.ea7jmf.instagramviewer.models.InstagramUser;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -63,9 +66,19 @@ public class PhotosActivity extends ActionBarActivity {
                     for (int i = 0; i < photosJSON.length(); i++) {
                         JSONObject photoJSON = photosJSON.getJSONObject(i);
                         InstagramPhoto photo = InstagramPhoto.parse(photoJSON);
-                        photos.add(photo);
 
-                        Log.i("fetchPopularPhotos", photo.toString());
+                        // Parse and set username
+                        photo.setUser(InstagramUser.parse(photoJSON.getJSONObject("user")));
+
+                        // Parse comments
+                        ArrayList<InstagramComment> comments = photo.getComments();
+                        JSONArray commentsJSON = photoJSON.getJSONObject("comments").getJSONArray("data");
+                        for (int j = 0; j < commentsJSON.length(); j++) {
+                            comments.add(InstagramComment.parse(commentsJSON.getJSONObject(j)));
+                        }
+
+                        // Add to photos list
+                        photos.add(photo);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

@@ -9,12 +9,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ea7jmf.instagramviewer.models.InstagramPhoto;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,6 +20,8 @@ import java.util.List;
  */
 public class InstagramPhotoAdapter extends ArrayAdapter<InstagramPhoto> {
 
+    private static final String GLOBE_EMOJI = "🌍";
+    private static final String CLOCK_EMOJI = "🕜";
     TextView tvCaption;
     TextView txtUsername;
     TextView txtLocation;
@@ -49,17 +49,21 @@ public class InstagramPhotoAdapter extends ArrayAdapter<InstagramPhoto> {
         imgPhoto = (ImageView) convertView.findViewById(R.id.imgPhoto);
 
         tvCaption.setText(photo.getCaption());
-        txtUsername.setText(photo.getUsername());
+        txtUsername.setText(photo.getUser().getUsername());
 
         // If there's any location information just show to the user
-        txtLocation.setVisibility(View.INVISIBLE);
-        if (photo.getLatitude() != 0.0 && photo.getLongitude() != 0.0) {
+
+        if (photo.getLocationName() != null) {
+            txtLocation.setText(GLOBE_EMOJI + " " + photo.getLocationName());
+        } else if (photo.getLatitude() != 0.0 && photo.getLongitude() != 0.0) {
             DecimalFormat df = new DecimalFormat("#.00");
-            txtLocation.setText("⚑ " + df.format(photo.getLatitude()) + ", " + df.format(photo.getLongitude()));
+            txtLocation.setText(GLOBE_EMOJI + " " + df.format(photo.getLatitude()) + ", " + df.format(photo.getLongitude()));
             txtLocation.setVisibility(View.VISIBLE);
+        } else {
+            txtLocation.setVisibility(View.INVISIBLE);
         }
 
-        txtPostingTime.setText("🕛 " + DateUtils.getRelativeTimeSpanString(photo.getCreatedTime() * 1000,
+        txtPostingTime.setText(CLOCK_EMOJI + " " + DateUtils.getRelativeTimeSpanString(photo.getCreatedTime() * 1000,
                 System.currentTimeMillis(),
                 DateUtils.SECOND_IN_MILLIS));
 
