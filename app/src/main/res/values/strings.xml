@@ -7,4 +7,9 @@
     <string name="popular_photos_caption">Popular Photos</string>
     <string name="caption_default_text">This is a default caption</string>
 
+    <plurals name="photo_likes">
+        <item quantity="zero">No likes</item>
+        <item quantity="one">1 like</item>
+        <item quantity="other">%d likes</item>
+    </plurals>
 </resources>

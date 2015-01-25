@@ -22,11 +22,15 @@ public class InstagramPhotoAdapter extends ArrayAdapter<InstagramPhoto> {
 
     private static final String GLOBE_EMOJI = "🌍";
     private static final String CLOCK_EMOJI = "🕜";
+    private static final String HEART_EMOJI = "❤";
+
     TextView tvCaption;
     TextView txtUsername;
     TextView txtLocation;
     TextView txtPostingTime;
+    TextView txtLikes;
     ImageView imgPhoto;
+    ImageView imgAvatar;
 
     public InstagramPhotoAdapter(Context context, List<InstagramPhoto> photos) {
         super(context, android.R.layout.simple_list_item_1, photos);
@@ -46,13 +50,20 @@ public class InstagramPhotoAdapter extends ArrayAdapter<InstagramPhoto> {
         txtUsername = (TextView) convertView.findViewById(R.id.txtUsername);
         txtLocation = (TextView) convertView.findViewById((R.id.txtLocation));
         txtPostingTime = (TextView) convertView.findViewById(R.id.txtPostingTime);
+        txtLikes = (TextView) convertView.findViewById(R.id.txtLikes);
         imgPhoto = (ImageView) convertView.findViewById(R.id.imgPhoto);
+        imgAvatar = (ImageView) convertView.findViewById(R.id.imgAvatar);
 
-        tvCaption.setText(photo.getCaption());
+        if (photo.getCaption() != null) {
+            tvCaption.setText(photo.getCaption());
+            tvCaption.setVisibility(View.VISIBLE);
+        } else {
+            tvCaption.setVisibility(View.INVISIBLE);
+        }
+
         txtUsername.setText(photo.getUser().getUsername());
 
-        // If there's any location information just show to the user
-
+        // Writing location info or hiding
         if (photo.getLocationName() != null) {
             txtLocation.setText(GLOBE_EMOJI + " " + photo.getLocationName());
         } else if (photo.getLatitude() != 0.0 && photo.getLongitude() != 0.0) {
@@ -63,15 +74,25 @@ public class InstagramPhotoAdapter extends ArrayAdapter<InstagramPhoto> {
             txtLocation.setVisibility(View.INVISIBLE);
         }
 
+        // Set likes text
+        txtLikes.setText(HEART_EMOJI + " " +
+                convertView.getResources().getQuantityString(
+                        R.plurals.photo_likes,
+                        photo.getLikesCount(),
+                        photo.getLikesCount()));
+
+        // Set relative time text
         txtPostingTime.setText(CLOCK_EMOJI + " " + DateUtils.getRelativeTimeSpanString(photo.getCreatedTime() * 1000,
                 System.currentTimeMillis(),
                 DateUtils.SECOND_IN_MILLIS));
 
+        // Set image height
         imgPhoto.getLayoutParams().height = photo.getImageHeight();
         // Reset image view
         imgPhoto.setImageResource(0);
 
         Picasso.with(getContext()).load(photo.getImageUrl()).into(imgPhoto);
+        Picasso.with(getContext()).load(photo.getUser().getProfilePicUrl()).into(imgAvatar);
 
         return convertView;
     }
