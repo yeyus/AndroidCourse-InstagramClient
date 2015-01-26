@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <com.makeramen.RoundedImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/imgCommentAvatar"
+        android:src="@drawable/no_photo_grey_1x"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginRight="5dp"
+        app:riv_corner_radius="30dip"
+        app:riv_mutate_background="true"
+        app:riv_tile_mode="repeat"
+        app:riv_oval="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Default user"
+        android:id="@+id/txtUsername"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/imgCommentAvatar"
+        android:layout_toEndOf="@+id/imgCommentAvatar"
+        android:paddingLeft="8dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="This is a sample comment"
+        android:id="@+id/txtComment"
+        android:layout_below="@+id/txtUsername"
+        android:layout_toRightOf="@+id/imgCommentAvatar"
+        android:layout_toEndOf="@+id/imgCommentAvatar"
+        android:paddingLeft="8dp"
+        android:paddingTop="8dp" />
+</RelativeLayout>

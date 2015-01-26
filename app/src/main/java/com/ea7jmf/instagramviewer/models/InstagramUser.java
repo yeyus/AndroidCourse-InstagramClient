@@ -1,12 +1,15 @@
 package com.ea7jmf.instagramviewer.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
  * Created by yeyus on 1/24/15.
  */
-public class InstagramUser {
+public class InstagramUser implements Parcelable {
 
     private String username;
     private String profilePicUrl;
@@ -58,5 +61,33 @@ public class InstagramUser {
                 ", profilePicUrl='" + profilePicUrl + '\'' +
                 ", fullName='" + fullName + '\'' +
                 '}';
+    }
+
+    /**
+     * Parcelable
+     */
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(username);
+        dest.writeString(profilePicUrl);
+        dest.writeString(fullName);
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public InstagramUser createFromParcel(Parcel in) {return new InstagramUser(in); }
+
+        public InstagramUser[] newArray(int size) {return new InstagramUser[size]; }
+    };
+
+    public InstagramUser(Parcel in) {
+        username = in.readString();
+        profilePicUrl = in.readString();
+        fullName = in.readString();
     }
 }

@@ -12,4 +12,7 @@
         <item quantity="one">1 like</item>
         <item quantity="other">%d likes</item>
     </plurals>
+
+    <string name="title_activity_comments">CommentsActivity</string>
+
 </resources>

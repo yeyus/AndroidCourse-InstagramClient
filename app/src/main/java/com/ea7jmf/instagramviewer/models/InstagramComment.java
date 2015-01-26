@@ -1,12 +1,15 @@
 package com.ea7jmf.instagramviewer.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
  * Created by yeyus on 1/24/15.
  */
-public class InstagramComment {
+public class InstagramComment implements Parcelable {
 
     private long createdTime;
     private String text;
@@ -59,5 +62,37 @@ public class InstagramComment {
                 ", text='" + text + '\'' +
                 ", user=" + user +
                 '}';
+    }
+
+    /**
+     * Parcelable
+     */
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(createdTime);
+        dest.writeString(text);
+        dest.writeParcelable(user, 0);
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public InstagramComment createFromParcel(Parcel in) {
+            return new InstagramComment(in);
+        }
+
+        public InstagramComment[] newArray(int size) {
+            return new InstagramComment[size];
+        }
+    };
+
+    public InstagramComment(Parcel in) {
+        createdTime = in.readLong();
+        text = in.readString();
+        user = in.readParcelable(InstagramUser.class.getClassLoader());
     }
 }

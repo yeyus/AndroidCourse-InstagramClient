@@ -24,13 +24,13 @@ public class InstagramPhotoAdapter extends ArrayAdapter<InstagramPhoto> {
     private static final String CLOCK_EMOJI = "🕜";
     private static final String HEART_EMOJI = "❤";
 
-    TextView tvCaption;
-    TextView txtUsername;
-    TextView txtLocation;
-    TextView txtPostingTime;
-    TextView txtLikes;
-    ImageView imgPhoto;
-    ImageView imgAvatar;
+    private TextView tvCaption;
+    private TextView txtUsername;
+    private TextView txtLocation;
+    private TextView txtPostingTime;
+    private TextView txtLikes;
+    private ImageView imgPhoto;
+    private ImageView imgAvatar;
 
     public InstagramPhotoAdapter(Context context, List<InstagramPhoto> photos) {
         super(context, android.R.layout.simple_list_item_1, photos);
@@ -40,7 +40,7 @@ public class InstagramPhotoAdapter extends ArrayAdapter<InstagramPhoto> {
     public View getView(int position, View convertView, ViewGroup parent) {
         InstagramPhoto photo = getItem(position);
 
-        if(convertView == null) {
+        if (convertView == null) {
             convertView = LayoutInflater
                     .from(getContext())
                     .inflate(R.layout.item_photo, parent, false);
