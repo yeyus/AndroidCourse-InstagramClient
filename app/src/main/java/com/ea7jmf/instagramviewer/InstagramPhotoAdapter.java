@@ -91,7 +91,10 @@ public class InstagramPhotoAdapter extends ArrayAdapter<InstagramPhoto> {
         // Reset image view
         imgPhoto.setImageResource(0);
 
-        Picasso.with(getContext()).load(photo.getImageUrl()).into(imgPhoto);
+        Picasso.with(getContext())
+                .load(photo.getImageUrl())
+                .placeholder(R.drawable.no_photo_grey_1x)
+                .into(imgPhoto);
         Picasso.with(getContext()).load(photo.getUser().getProfilePicUrl()).into(imgAvatar);
 
         return convertView;

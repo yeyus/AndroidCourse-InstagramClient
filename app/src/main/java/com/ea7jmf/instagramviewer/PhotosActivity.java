@@ -1,5 +1,6 @@
 package com.ea7jmf.instagramviewer;
 
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,6 +29,7 @@ public class PhotosActivity extends ActionBarActivity {
     private static final String POPULAR_ENDPOINT = "/media/popular";
 
     private ListView lvPhotos;
+    private SwipeRefreshLayout swipeContainer;
 
     private ArrayList<InstagramPhoto> photos = new ArrayList<>();
     private InstagramPhotoAdapter aPhotos;
@@ -42,6 +44,21 @@ public class PhotosActivity extends ActionBarActivity {
     }
 
     private void configureListView() {
+
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                fetchPopularPhotos();
+            }
+        });
+
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
         lvPhotos = (ListView) findViewById(R.id.lvPhotos);
         aPhotos = new InstagramPhotoAdapter(this, photos);
         lvPhotos.setAdapter(aPhotos);
@@ -82,6 +99,8 @@ public class PhotosActivity extends ActionBarActivity {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                } finally {
+                    swipeContainer.setRefreshing(false);
                 }
                 aPhotos.notifyDataSetChanged();
             }
@@ -90,6 +109,7 @@ public class PhotosActivity extends ActionBarActivity {
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 super.onFailure(statusCode, headers, throwable, errorResponse);
                 Log.d("fetchPopularPhotos", errorResponse.toString());
+                swipeContainer.setRefreshing(false);
             }
         });
     }
